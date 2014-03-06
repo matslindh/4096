@@ -94,10 +94,12 @@ class Engine:
         board = self.board
 
         for row_idx in range(0, len(board) - 1):
-            for el_idx in range(0, len(board[row_idx]) - 1):
+            for el_idx in range(0, len(board[row_idx])):
                 if board[row_idx][el_idx] == board[row_idx+1][el_idx]:
                     return False
 
+        for row_idx in range(0, len(board)):
+            for el_idx in range(0, len(board[row_idx]) - 1):
                 if board[row_idx][el_idx] == board[row_idx][el_idx+1]:
                     return False
 
