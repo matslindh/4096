@@ -56,3 +56,8 @@ Example
 -------
 
 See [the exampel bot implementation](4096/bot.py) in the repository.
+
+License
+-------
+
+This project and all included files are licensed [under the MIT license](LICENSE).
