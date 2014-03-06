@@ -2,7 +2,7 @@
 import random
 from bothelper import read_board, up, down, left, right, botsetup
 
-s = botsetup("example-bot")
+s = botsetup("random-example")
 
 previous_score = 0
 
