@@ -37,29 +37,29 @@ sys.stderr.write("Identifier: " + identifier + "\n")
 # give client board and process input until finished
 write(conn, game.to_string())
 
-while True:
-	c = read(conn)
+try:
+	while conn:
+		c = read(conn)
 
-	if c == 'u':
-		game.up()
-	elif c == 'd':
-		game.down()
-	elif c == 'l':
-		game.left()
-	elif c == 'r':
-		game.right()
+		if c == 'u':
+			game.up()
+		elif c == 'd':
+			game.down()
+		elif c == 'l':
+			game.left()
+		elif c == 'r':
+			game.right()
 
-	write(conn, game.to_string())
+		write(conn, game.to_string())
 
-	move_count += 1
+		move_count += 1
 
-	if game.is_board_locked():
-		write(conn, "FIN " + str(game.score) + "\n")
-		break
-
-# give score
-sys.stderr.write("Score: " + str(game.score) + "\n")
-sys.stderr.write("Moves: " + str(move_count) + "\n")
+		if game.is_board_locked():
+			write(conn, "FIN " + str(game.score) + "\n")
+except (BrokenPipeError, ConnectionResetError):
+	# give score
+	sys.stderr.write("Score: " + str(game.score) + "\n")
+	sys.stderr.write("Moves: " + str(move_count) + "\n")
 
 # clean up
 process.terminate()
