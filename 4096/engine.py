@@ -127,14 +127,15 @@ class Engine:
         # too high, lets just .. be happy for them.
         return val*2
 
-    def print_board(self):
+    def to_string(self):
+        s = ""
+
         for row in self.board:
-            for el in row:
-                print(el, end=" ")
+            s += ' '.join(map(str, row)) + "\n"
 
-            print("")
+        s += "== " + str(self.score) + "\n"
 
-        print("== " + str(self.score))  
+        return s  
 
 
 """eng = Engine()
