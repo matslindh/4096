@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import engine, sys, uuid, random, subprocess, socket, os
 
 if len(sys.argv) < 3:
