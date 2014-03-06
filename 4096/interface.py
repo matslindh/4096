@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import engine, sys, uuid, random, subprocess, socket, os
+import engine, sys, uuid, random, subprocess, socket, os, time
 
 if len(sys.argv) < 3:
 	sys.stderr.write("Usage: interface.py <randomseed> <executable>\n")
@@ -17,6 +17,7 @@ def read(conn):
 
 # create local unix socket for communication with child
 s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+s.settimeout(2)
 identifier = str(uuid.uuid4())
 s_path = "/tmp/4096-" + identifier
 s.bind(s_path)
@@ -56,10 +57,14 @@ try:
 
 		if game.is_board_locked():
 			write(conn, "FIN " + str(game.score) + "\n")
+except (socket.timeout):
+	sys.stderr.write(" * Socket timed out.\n")
 except (BrokenPipeError, ConnectionResetError):
-	# give score
-	sys.stderr.write("Score: " + str(game.score) + "\n")
-	sys.stderr.write("Moves: " + str(move_count) + "\n")
+	pass
+
+# give score
+sys.stderr.write("Score: " + str(game.score) + "\n")
+sys.stderr.write("Moves: " + str(move_count) + "\n")
 
 # clean up
 process.terminate()
