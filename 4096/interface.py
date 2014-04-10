@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import engine, sys, uuid, random, subprocess, socket, os, time
+import platform
 
 if len(sys.argv) < 3:
 	sys.stderr.write("Usage: interface.py <randomseed> <executable>\n")
@@ -15,15 +16,24 @@ def write(conn, str):
 def read(conn):
 	return conn.recv(1024).decode("utf-8").strip()
 
-# create local unix socket for communication with child
-s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-s.settimeout(2)
-identifier = str(uuid.uuid4())
-s_path = "/tmp/4096-" + identifier
-s.bind(s_path)
+identifier = ""
 
-# launch child
-process = subprocess.Popen([sys.argv[2], s_path])
+if platform.system() == 'Windows':
+	print "Must connect differently"
+	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	s.bind(("", 8765))
+	print sys.argv[2]
+	process = subprocess.Popen([sys.executable, sys.argv[2], '8765'])
+else:
+	# create local unix socket for communication with child
+	s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+	s.settimeout(2)
+	identifier = str(uuid.uuid4())
+	s_path = "/tmp/4096-" + identifier
+	s.bind(s_path)
+
+	# launch child
+	process = subprocess.Popen([sys.argv[2], s_path])
 s.listen(1)
 conn, addr = s.accept()
 
@@ -59,7 +69,8 @@ try:
 			write(conn, "FIN " + str(game.score) + "\n")
 except (socket.timeout):
 	sys.stderr.write(" * Socket timed out.\n")
-except (BrokenPipeError, ConnectionResetError):
+#except (BrokenPipeError, ConnectionResetError):
+except:
 	pass
 
 # give score
@@ -68,4 +79,5 @@ sys.stderr.write("Moves: " + str(move_count) + "\n")
 
 # clean up
 process.terminate()
-os.remove(s_path)
+if not platform.system() == 'Windows':
+	os.remove(s_path)
